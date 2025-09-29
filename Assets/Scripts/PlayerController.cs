@@ -5,21 +5,28 @@ using TMPro; // support TextMeshPro UI
 public class PlayerController : MonoBehaviour
 {
 
-     public float horizontalInput; 
-     public float verticalInput;
-        public float speed = 3.0f;
-        public float xRange = 0.9f;
-        public float zMax = 17.5f;
-        public float zMin = 11.0f;
-        public GameObject projectilePrefab; // prefab for projectile
+    public float horizontalInput;
+    public float verticalInput;
+    public float speed = 3.0f;
+    public float xRange = 0.9f;
+    public float zMax = 17.5f;
+    public float zMin = 11.0f;
+    public GameObject projectilePrefab; // prefab for projectile
+    [Header("Shooting")]
+    public Transform firePoint; // where player projectiles spawn (assign a child Transform on the player)
 
-        [Header("Pickup")] // just a header in the inspector for organization
-        public int score = 0; // player's score
+    [Header("Pickup")] // just a header in the inspector for organization
+    public int score = 0; // player's score
     public Text scoreText; // optional: assign a Unity UI Text (legacy)
     public TextMeshProUGUI scoreTextTMP; // optional: assign a TextMeshProUGUI if you're using TMP
+    [Header("Health")]
+    public int maxLives = 3; // maximum lives the player can have
+    public int lives = 3; // current lives
+    public Text livesText; // optional: assign a Unity UI Text (legacy)
+    public TextMeshProUGUI livesTextTMP; // optional: assign a TextMeshProUGUI if you're using TMP
 
-        // internals for pickup
-        private DonutPickup _nearbyPickup; // reference to nearby pickup, null if none . What is "DonutPickup"? It's a class we defined in another script that represents a donut pickup item in the game. How does it work? It has methods and properties to handle pickup logic, like detecting when the player is near and allowing the player to pick it up. Is it a built-in class? No, it's a custom class we created for our game. "_nearbyPickup" is the variable name we chose to represent an instance of that class. What is an instance of a class? It's a specific object created from that class, with its own unique data and state. Why? Because we want to keep track of which pickup the player is currently near, so we can interact with it when the player presses the pickup key.
+    // internals for pickup
+    private DonutPickup _nearbyPickup; // reference to nearby pickup, null if none . What is "DonutPickup"? It's a class we defined in another script that represents a donut pickup item in the game. How does it work? It has methods and properties to handle pickup logic, like detecting when the player is near and allowing the player to pick it up. Is it a built-in class? No, it's a custom class we created for our game. "_nearbyPickup" is the variable name we chose to represent an instance of that class. What is an instance of a class? It's a specific object created from that class, with its own unique data and state. Why? Because we want to keep track of which pickup the player is currently near, so we can interact with it when the player presses the pickup key.
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -33,7 +40,11 @@ public class PlayerController : MonoBehaviour
         {
             scoreTextTMP.text = "Score: " + score.ToString();
         }
-        
+        if (firePoint == null)
+        {
+            Debug.LogWarning("PlayerController: firePoint is not assigned. Projectiles will spawn at the player's position.", this);
+        }
+
     }
 
     // Update is called once per frame
@@ -58,16 +69,35 @@ public class PlayerController : MonoBehaviour
             transform.position = new Vector3(transform.position.x, transform.position.y, zMax);
         }
 
-        horizontalInput = - Input.GetAxis("Vertical");  // reversed vertical input
+        horizontalInput = -Input.GetAxis("Vertical");  // reversed vertical input
         transform.Translate(Vector3.right * horizontalInput * Time.deltaTime * speed);  // move player based on input
 
         verticalInput = Input.GetAxis("Horizontal");  // horizontal input
         transform.Translate(Vector3.forward * verticalInput * Time.deltaTime * speed);  // move player based on input
-        
+
         if (Input.GetKeyDown(KeyCode.Space))  // if space key is pressed
         {
-            // Launch a projectile from the player
-            Instantiate(projectilePrefab, transform.position, projectilePrefab.transform.rotation);
+            // Launch a projectile from the player's fire point (fallback to player position)
+                Vector3 spawnPos = (firePoint != null) ? firePoint.position : transform.position;
+                Quaternion spawnRot = (firePoint != null) ? firePoint.rotation : projectilePrefab.transform.rotation;
+                var proj = Instantiate(projectilePrefab, spawnPos, spawnRot);
+                // mark ownership on whichever projectile component is present
+                var pGeneric = proj.GetComponent<ProjectileGeorge>();
+                if (pGeneric != null) pGeneric.firedByPlayer = true;
+                var pGeorge = proj.GetComponent<ProjectileGeorge>();
+                if (pGeorge != null) pGeorge.firedByPlayer = true;
+                var pPolice = proj.GetComponent<ProjectilePolice>();
+                if (pPolice != null) pPolice.firedByPlayer = true; // in case player prefab uses police script accidentally
+
+                // prevent the projectile from colliding with the shooter (player)
+                Collider projCol = proj.GetComponent<Collider>();
+                if (projCol == null) projCol = proj.GetComponentInChildren<Collider>();
+                Collider myCol = GetComponent<Collider>();
+                if (myCol == null) myCol = GetComponentInChildren<Collider>();
+                if (projCol != null && myCol != null)
+                {
+                    Physics.IgnoreCollision(projCol, myCol);
+                }
         }
 
         // Pickup with 'S' when near a donut
@@ -86,8 +116,32 @@ public class PlayerController : MonoBehaviour
                 {
                     scoreTextTMP.text = "Score: " + score.ToString();
                 }
+                // initialize lives display
+                lives = Mathf.Clamp(lives, 0, maxLives); // ensure lives is within valid range
+                if (livesText != null) livesText.text = "Lives: " + lives.ToString(); // update lives display
+                if (livesTextTMP != null) livesTextTMP.text = "Lives: " + lives.ToString(); // update lives display
             }
         }
+    }
+
+    // Called by projectiles or other damage sources
+    public void TakeDamage(int amount) // reduce player lives by the given amount
+    {
+        lives -= amount;
+        lives = Mathf.Max(lives, 0);
+        if (livesText != null) livesText.text = "Lives: " + lives.ToString();
+        if (livesTextTMP != null) livesTextTMP.text = "Lives: " + lives.ToString();
+
+        if (lives <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die() // handle player death
+    {
+        // simple death: remove player object
+        Destroy(gameObject);
     }
 
     // Called by DonutPickup when entering/exiting trigger
