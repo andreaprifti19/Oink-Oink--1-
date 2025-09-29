@@ -97,8 +97,8 @@ GameObject:
   - component: {fileID: 8000007904615048484}
   - component: {fileID: 4138910802059954928}
   - component: {fileID: 6011953456219552796}
-  - component: {fileID: 7999993994693062461}
   - component: {fileID: 2613917976268135684}
+  - component: {fileID: 3807534904001614778}
   m_Layer: 0
   m_Name: Police Bullet
   m_TagString: Untagged
@@ -146,19 +146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fca4a7dbc800a5142a7903070401f8aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7999993994693062461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6636586083165937643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e065c8bc457479648965c69cc4673645, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 3.5
 --- !u!65 &2613917976268135684
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -180,3 +167,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.046830654, y: 0.049608644, z: 0.17962646}
   m_Center: {x: -0.00015294552, y: 0.003686389, z: -0.0015468597}
+--- !u!114 &3807534904001614778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6636586083165937643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fe27c9b3d25bfa418c82868b2b55b18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 2.5
+  firedByPlayer: 0

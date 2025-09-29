@@ -33,6 +33,24 @@ public class PoliceCarShooter : MonoBehaviour
 
     void Fire() // actually fire the projectile
     {
-        Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        var proj = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+
+        // set ownership on known projectile types
+        var pGeneric = proj.GetComponent<ProjectilePolice>();
+        if (pGeneric != null) pGeneric.firedByPlayer = false;
+        var pGeorge = proj.GetComponent<ProjectileGeorge>();
+        if (pGeorge != null) pGeorge.firedByPlayer = false;
+        var pPolice = proj.GetComponent<ProjectilePolice>();
+        if (pPolice != null) pPolice.firedByPlayer = false;
+
+        // prevent projectile from colliding with the police car itself
+        Collider projCol = proj.GetComponent<Collider>();
+        if (projCol == null) projCol = proj.GetComponentInChildren<Collider>();
+        Collider carCol = GetComponent<Collider>();
+        if (carCol == null) carCol = GetComponentInChildren<Collider>();
+        if (projCol != null && carCol != null)
+        {
+            Physics.IgnoreCollision(projCol, carCol);
+        }
     }
 }

@@ -26,13 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4717407724367151931}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8399012233708867127}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &7890934538185929463
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -98,7 +98,8 @@ GameObject:
   - component: {fileID: 3867454987660255110}
   - component: {fileID: 1911164954312898103}
   - component: {fileID: 1914479126960293156}
-  - component: {fileID: 4339250788696336330}
+  - component: {fileID: -1021111463007378063}
+  - component: {fileID: -4394725695225154973}
   m_Layer: 0
   m_Name: George Bullet
   m_TagString: Untagged
@@ -137,7 +138,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -167,7 +168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fca4a7dbc800a5142a7903070401f8aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4339250788696336330
+--- !u!114 &-1021111463007378063
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -176,7 +177,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 8027278001892440970}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bf5af0eca501904286db8e8c53237c8, type: 3}
+  m_Script: {fileID: 11500000, guid: bee4541bde8d98141beef30bcbbba968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  firedByPlayer: 1
+--- !u!54 &-4394725695225154973
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8027278001892440970}
+  serializedVersion: 5
+  m_Mass: 3
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
